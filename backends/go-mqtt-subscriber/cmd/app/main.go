@@ -6,6 +6,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/liwaisi-tech/iot-hub-center/backends/go-mqtt-subscriber/internal/infrastructure/db/postgres"
+	"github.com/liwaisi-tech/iot-hub-center/backends/go-mqtt-subscriber/internal/infrastructure/mqtt/paho/consumers"
 	pkgGorm "github.com/liwaisi-tech/iot-hub-center/backends/go-mqtt-subscriber/pkg/gorm/postgres"
 	pkgZap "github.com/liwaisi-tech/iot-hub-center/backends/go-mqtt-subscriber/pkg/zap"
 )
@@ -40,6 +41,7 @@ func main() {
 		logger.Errorw("Failed to run migrations", "error", err)
 		return
 	}
+	consumers.RunConsumers()
 }
 
 func runMigrations() error {

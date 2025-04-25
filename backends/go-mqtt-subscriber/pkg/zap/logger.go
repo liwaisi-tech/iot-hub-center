@@ -2,23 +2,29 @@ package zap
 
 import (
 	"os"
+	"sync"
 
 	"go.uber.org/zap"
 )
 
-var intance *zap.SugaredLogger
+var( 
+	instance *zap.SugaredLogger
+	once sync.Once
+)
 
 func GetLogger() *zap.SugaredLogger {
-	if intance != nil {
-		return intance
+	if instance != nil {
+		return instance
 	}
-	var logger *zap.Logger
-	if os.Getenv("ENV") == "prod" {
-		logger, _ = zap.NewProductionConfig().Build()
-	} else {
-		logger, _ = zap.NewDevelopmentConfig().Build()
-	}
-	defer logger.Sync()
-	intance = logger.Sugar()
-	return intance
+	once.Do(func() {
+		var logger *zap.Logger
+		if os.Getenv("ENV") == "prod" {
+			logger, _ = zap.NewProductionConfig().Build()
+		} else {
+			logger, _ = zap.NewDevelopmentConfig().Build()
+		}
+		defer logger.Sync()
+		instance = logger.Sugar()
+	})
+	return instance
 }
