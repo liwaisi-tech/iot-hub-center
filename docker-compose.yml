@@ -1,0 +1,33 @@
+services:
+  nanomq:
+    image: emqx/nanomq:latest
+    container_name: nanomq
+    env_file:
+      - .env
+    environment:
+      NANOMQ_USER: ${NANOMQ_USER:-nanomq}
+      NANOMQ_PASSWORD: ${NANOMQ_PASSWORD:-nanomq}
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8883:8883"
+    networks:
+      - iotnet
+
+  postgres:
+    image: postgres:13
+    container_name: postgres13
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-liwaisi-iot-db}
+    ports:
+      - "5432:5432"
+    networks:
+      - iotnet
+
+networks:
+  iotnet:
+    driver: bridge
