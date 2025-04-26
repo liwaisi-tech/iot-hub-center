@@ -1,0 +1,71 @@
+services:
+  nanomq:
+    image: emqx/nanomq:latest
+    container_name: nanomq
+    env_file:
+      - .env
+    environment:
+      NANOMQ_USER: ${NANOMQ_USER:-nanomq}
+      NANOMQ_PASSWORD: ${NANOMQ_PASSWORD:-nanomq}
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8883:8883"
+    restart: unless-stopped
+    networks:
+      - iotnet
+
+  postgres:
+    image: postgres:13
+    container_name: postgres13
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-liwaisi-iot-db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - iotnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  go-mqtt-subscriber:
+    build:
+      context: ./backends/go-mqtt-subscriber
+      dockerfile: Dockerfile
+    container_name: go-mqtt-subscriber
+    env_file:
+      - ./backends/go-mqtt-subscriber/.env
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-liwaisi-iot-db}
+      MQTT_BROKER: ${MQTT_BROKER:-mqtt://nanomq:1883}
+      MQTT_CLIENT_ID: ${MQTT_CLIENT_ID:-liwaisi-iot-hub}
+      MQTT_USERNAME: ${MQTT_USERNAME:-liwaisi-iot-hub}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-liwaisi-iot-hub}
+      ENV: ${ENV:-dev}
+    depends_on:
+      nanomq:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    networks:
+      - iotnet
+
+networks:
+  iotnet:
+    driver: bridge
+
+volumes:
+  postgres_data:
