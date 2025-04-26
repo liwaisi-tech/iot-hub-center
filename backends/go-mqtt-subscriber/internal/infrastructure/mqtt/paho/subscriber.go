@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/google/uuid"
 	pkgZap "github.com/liwaisi-tech/iot-hub-center/backends/go-mqtt-subscriber/pkg/zap"
 )
 
@@ -65,7 +65,7 @@ func (sh *SubscriberHandler) RunConsumer(topic string) {
 func getClientOptions() (clientOptions *mqtt.ClientOptions) {
 	clientOptions = mqtt.NewClientOptions()
 	clientOptions.AddBroker(os.Getenv("MQTT_BROKER"))
-	clientOptions.SetClientID(fmt.Sprintf("%s-%d", os.Getenv("MQTT_CLIENT_ID"), time.Now().Unix()))
+	clientOptions.SetClientID(fmt.Sprintf("%s-%s", os.Getenv("MQTT_CLIENT_ID"), uuid.New().String()))
 	if os.Getenv("MQTT_USERNAME") != "" {
 		clientOptions.SetUsername(os.Getenv("MQTT_USERNAME"))
 		clientOptions.SetPassword(os.Getenv("MQTT_PASSWORD"))
