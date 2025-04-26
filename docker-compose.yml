@@ -31,7 +31,41 @@ services:
     restart: unless-stopped
     networks:
       - iotnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  go-mqtt-subscriber:
+    build:
+      context: ./backends/go-mqtt-subscriber
+      dockerfile: Dockerfile
+    container_name: go-mqtt-subscriber
+    env_file:
+      - ./backends/go-mqtt-subscriber/.env
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-liwaisi-iot-db}
+      MQTT_BROKER: ${MQTT_BROKER:-mqtt://nanomq:1883}
+      MQTT_CLIENT_ID: ${MQTT_CLIENT_ID:-liwaisi-iot-hub}
+      MQTT_USERNAME: ${MQTT_USERNAME:-liwaisi-iot-hub}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-liwaisi-iot-hub}
+      ENV: ${ENV:-dev}
+    depends_on:
+      nanomq:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    networks:
+      - iotnet
 
 networks:
   iotnet:
     driver: bridge
+
+volumes:
+  postgres_data:
