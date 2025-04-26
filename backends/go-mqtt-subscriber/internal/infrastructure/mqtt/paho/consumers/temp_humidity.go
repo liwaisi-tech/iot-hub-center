@@ -46,13 +46,17 @@ func NewTempHumidityConsumer() *TempHumidityConsumer {
 	consumer.handler = subscriber.New(
 		context.Background(),
 		consumer.handleMessage,
+		10,
 	)
 	return consumer
 }
 
 func (s *TempHumidityConsumer) Run() {
 	s.logger.Infow("Running TempHumidityConsumer", "topic", s.topic)
-	s.handler.RunConsumer(s.topic)
+	err := s.handler.RunConsumer(s.topic)
+	if err != nil {
+		s.logger.Errorw("Failed to run TempHumidityConsumer", "error", err)
+	}
 }
 
 type TempHumidityMessage struct {
