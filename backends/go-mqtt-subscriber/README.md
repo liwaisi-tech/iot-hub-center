@@ -1,30 +1,19 @@
-/your-project
-  /cmd
-    /app              # Application entrypoint (main.go)
-  /internal
-    /domain
-      /message
-        entity.go     # Message entity definition
-        repository.go # MessageRepository interface
-        service.go    # Domain service (business logic)
-    /application
-      /message
-        usecase.go    # Application use cases (e.g., ReceiveAndStoreMessage)
-    /infrastructure
-      /db
-        repository.go # Database implementation of MessageRepository
-        model.go      # DB models, if different from domain
-      /topic
-        subscriber.go # Implementation for subscribing to topic (e.g., MQTT/Kafka)
-    /interfaces
-      /api
-        handler.go    # HTTP/GRPC handlers if exposing APIs
-      /subscriber
-        listener.go   # Entry point for topic message receiving
-  /pkg                # Shared utility packages (optional)
-  /configs            # Configuration files (env, yaml, etc.)
-  /scripts            # Helper scripts (migrations, etc.)
-  /test               # Test files
-  go.mod
-  go.sum
-  README.md
+# MQTT Subscriber for Liwaisi IoT Hub
+
+Wellcome to the Liwaisi IoT Hub MQTT Subscriber repository. This repository contains the implementation of the MQTT subscriber for any IoT device that is connected to the Liwaisi IoT Hub.
+
+## Requirements
+
+- Go 1.24.2 or higher
+- PostgreSQL 13 or higher
+- MQTT Broker
+
+## Setup
+
+1. Clone the repository
+2. Copy the `env.example` file to `.env` and update the values
+3. Run `go run cmd/main.go`
+
+## License
+
+[License](LICENSE)
