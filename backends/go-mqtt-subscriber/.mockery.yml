@@ -1,0 +1,12 @@
+all: true
+recursive: true
+dir: ./mocks
+filename: '{{.InterfaceName}}Mock.go'
+force-file-write: true
+formatter: goimports
+log-level: info
+structname: '{{.InterfaceName}}Mock'
+pkgname: mocks
+template: testify
+packages:
+  github.com/liwaisi-tech/iot-hub-center/backends/go-mqtt-subscriber: {}
