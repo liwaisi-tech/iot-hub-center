@@ -60,6 +60,7 @@ services:
         condition: service_started
       postgres:
         condition: service_healthy
+    restart: unless-stopped
     networks:
       - iotnet
 
