@@ -11,7 +11,7 @@ const Header = () => {
       <div className="flex items-center gap-2">
         <WiDayFog className="text-6xl sm:text-8xl text-blue-700" />
         <div>
-          <h1 className="text-xl sm:text-4xl font-title font-bold">Liwaisi IoT</h1>
+          <h1 className="text-xl sm:text-4xl font-title font-bold">LiwAIsi IoT</h1>
           <p className="hidden sm:block text-sm text-gray-600 font-subtitle">Sistema de cultivos y riegos inteligentes</p>
         </div>
       </div>
